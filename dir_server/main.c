@@ -1,27 +1,44 @@
 #include "../minitalk.h"
 
-void	handler_sig_receiver(int signal)
+void	print_char(int bit, int pid)
 {
 	static int	i;
 	static char	c;
 
-	if ((signal == SIGUSR1) && ((i % 8) > 0))
-		c = c << 1 | 1;
-	else if (signal == SIGUSR2)
-		c = c << 1;
-	else
-		c = c | 1;
-	i += 1;
+	(void)pid;
+	c = c | bit;
+	i++;
 	if ((i % 8) == 0)
 	{
-		write(1, &c, 1);
+		if (c == 0)
+			write(1, "\n", 1);
+		else
+			write(1, &c, 1);
 		c = 0;
 	}
+	else
+		c <<= 1;
+}
+
+void	handler_sig_receiver(int sig, siginfo_t *info, void *ucontext)
+{
+	(void)ucontext;
+	print_char(sig == SIGUSR1, info->si_pid);
+}
+
+void	set_handler(struct sigaction *act)
+{
+	act->sa_flags = SA_SIGINFO;
+	act->sa_sigaction = handler_sig_receiver;
+	sigemptyset(&act->sa_mask);
+	sigaction(SIGUSR1, act, NULL);
+	sigaction(SIGUSR2, act, NULL);
 }
 
 int	main(int argc, char **argv)
 {
-	pid_t	pid;
+	pid_t				pid;
+	struct sigaction	act;
 
 	(void)argv;
 	if (argc != 1)
@@ -34,8 +51,7 @@ int	main(int argc, char **argv)
 	write(1, "\033[34mPID: ", 11);
 	ft_putnmb(pid);
 	write(1, "\n", 1);
-	signal(SIGUSR1, handler_sig_receiver);
-	signal(SIGUSR2, handler_sig_receiver);
+	set_handler(&act);
 	while (1)
 		pause();
 	return (0);
