@@ -8,7 +8,7 @@ void	end_mss(int pid)
 	while (i++ < 8)
 	{
 		kill(pid, SIGUSR2);
-		usleep(700);
+		usleep(50);
 	}
 }
 
@@ -34,7 +34,7 @@ void	send_bits(char c, int pid)
 			write(1, "\033[1;31mError:\n\033[0;31mFail send signal!\033[0m\n", 44);
 			exit(-1);
 		}
-		usleep(700);
+		usleep(50);
 	}
 }
 

@@ -4,16 +4,23 @@ void	print_char(int bit, int pid)
 {
 	static int	i;
 	static char	c;
+	static char	buff[2000];
 
-	(void)pid;
 	c = c | bit;
 	i++;
 	if ((i % 8) == 0)
 	{
-		if (c == 0)
-			write(1, "\n", 1);
-		else
-			write(1, &c, 1);
+		buff[(i / 8) - 1] = c;
+		if ((c == 0) || ((i / 8) == 2000))
+		{
+			write(1, "PID ", 4);
+			ft_putnmb(pid);
+			write(1, " say:", 5);
+			write(1, buff, i / 8);
+			if (c == 0)
+				write(1, "\n", 1);
+			i = 0;
+		}
 		c = 0;
 	}
 	else

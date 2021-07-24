@@ -1,7 +1,7 @@
 NAME_S=server
 NAME_C=client
 
-FLAGS = -Wall -Werror -Wextra -g
+FLAGS = -Wall -Werror -Wextra
 CC = gcc
 
 DIR_S = ./dir_server
@@ -25,12 +25,12 @@ $(NAME_C):	$(OBJS_C)
 			$(CC) $(FLAGS) $(OBJS_C) -o $(NAME_C)
 
 clean:
-		rm -rf $(OBJS_S)
-		rm -rf $(OBJS_C)
+			rm -rf $(OBJS_S)
+			rm -rf $(OBJS_C)
 
-fclean: clean
-		rm -rf $(NAME_S)
-		rm -rf $(NAME_C)
+fclean: 	clean
+			rm -rf $(NAME_S)
+			rm -rf $(NAME_C)
 
 re: fclean all
 
